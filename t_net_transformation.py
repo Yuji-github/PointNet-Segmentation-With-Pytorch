@@ -166,14 +166,3 @@ class Transformation(nn.Module):
         else:  # local features such as tires
             x = x.view(-1, 1024, 1).repeat(1, 1, N)
             return torch.cat([x, pointfeat], 1), matrix_3x3, matrix_kxk
-
-
-def pointnetloss_mertix(matrix_kxk):
-    d = matrix_kxk.size()[1]
-    I = torch.eye(d)[None, :, :]
-    if matrix_kxk.is_cuda:
-        I = I.cuda()
-    loss = torch.mean(
-        torch.norm(torch.bmm(matrix_kxk, matrix_kxk.transpose(2, 1)) - I, dim=(1, 2))
-    )
-    return loss
